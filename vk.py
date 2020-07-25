@@ -17,7 +17,7 @@ def check_error_response(body):
 
 
 def get_params_upload_server():
-    url = f'https://api.vk.com/method/photos.getWallUploadServer'
+    url = 'https://api.vk.com/method/photos.getWallUploadServer'
     response = requests.get(url, params=PARAMS_DEFAULT)
     response.raise_for_status()
     body = response.json()
@@ -28,13 +28,11 @@ def get_params_upload_server():
 
 
 def download_photo(upload_url, path_file):
-    url = f'https://api.vk.com/method/photos.saveWallPhoto'
     with open(path_file, 'rb') as file:
-        url = upload_url
         files = {
             'photo': file,
         }
-        response = requests.post(url,
+        response = requests.post(upload_url,
                                  files=files,
                                  params=PARAMS_DEFAULT)
         response.raise_for_status()
@@ -58,7 +56,7 @@ def save_photo(params_photo):
 
 
 def create_post_on_wall(owner_id, photo_id, message):
-    url = f'https://api.vk.com/method/wall.post'
+    url = 'https://api.vk.com/method/wall.post'
     response = requests.post(url,
                              params={**PARAMS_DEFAULT,
                                      'attachments': f"photo{owner_id}_{photo_id}",

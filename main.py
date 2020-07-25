@@ -13,20 +13,20 @@ class ErrorFileException(Exception):
 def download_random_comics():
     response = requests.get('https://xkcd.com/info.0.json')
     response.raise_for_status()
-    count_pages = response.json().get('num')
+    page_count = response.json().get('num')
 
-    random_page = randint(1, count_pages)
+    random_page = randint(1, page_count)
     response = requests.get(f'https://xkcd.com/{random_page}/info.0.json')
     response.raise_for_status()
     body = response.json()
     img_link = body.get('img')
-    title_commix = body.get('alt')
+    title_comic_book = body.get('alt')
     file_name = img_link.split('/')[-1]
     path = Path(file_name)
     load_image(img_link, path.name)
     if not path.is_file():
         raise ErrorFileException('Неудалось скачать файл')
-    return path.name, title_commix
+    return path.name, title_comic_book
 
 
 def load_image(url, path_file):
@@ -40,7 +40,7 @@ def load_image(url, path_file):
 
 
 if __name__ == '__main__':
-    file_name, title_comics = download_random_comics()
+    file_name, title_comic_book = download_random_comics()
     path = Path(file_name)
-    publish_photo_post(path.name, title_comics)
+    publish_photo_post(path.name, title_comic_book)
     path.unlink()
