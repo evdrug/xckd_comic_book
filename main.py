@@ -2,6 +2,7 @@ from pathlib import Path
 from random import randint
 
 import requests
+from environs import Env
 
 from vk import publish_photo_post
 
@@ -23,13 +24,13 @@ def download_random_comics():
     title_comic_book = body.get('alt')
     file_name = img_link.split('/')[-1]
     path = Path(file_name)
-    load_image(img_link, path.name)
+    downloading_image(img_link, path.name)
     if not path.is_file():
         raise ErrorFileException('Неудалось скачать файл')
     return path.name, title_comic_book
 
 
-def load_image(url, path_file):
+def downloading_image(url, path_file):
     response = requests.get(url)
     response.raise_for_status()
     path = Path(path_file)
@@ -40,7 +41,15 @@ def load_image(url, path_file):
 
 
 if __name__ == '__main__':
+    env = Env()
+    env.read_env()
+    access_token = env('VK_ACCESS_TOKEN')
     file_name, title_comic_book = download_random_comics()
     path = Path(file_name)
-    publish_photo_post(path.name, title_comic_book)
-    path.unlink()
+    try:
+        publish_photo_post(path.name, title_comic_book, access_token, env('PUBLIC_ID'))
+    finally:
+        path.unlink()
+
+
+
